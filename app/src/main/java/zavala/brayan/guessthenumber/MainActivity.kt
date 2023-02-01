@@ -14,48 +14,69 @@ class MainActivity : AppCompatActivity() {
     var num:Int=0
     var won=false
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val guessing: TextView = findViewById(R.id.guessings)
         val down: Button = findViewById(R.id.down)
-        val up:Button = findViewById(R.id.up)
-        val generate:Button=findViewById(R.id.generate)
-        val guessed:Button=findViewById(R.id.guessed)
+        val up: Button = findViewById(R.id.up)
+        val generate: Button = findViewById(R.id.generate)
+        val guessed: Button = findViewById(R.id.guessed)
+
 
         generate.setOnClickListener{
-            num = Random().nextInt(minValue-maxValue)
+            num = Random().nextInt(maxValue - minValue)
             guessing.setText(num.toString())
-            generate.visibility=View.INVISIBLE
-            guessed.visibility=View.INVISIBLE
+            generate.visibility= View.INVISIBLE
+            guessed.visibility= View.INVISIBLE
         }
 
         up.setOnClickListener{
-            minValue=num
-            if(checkingLimits()){
-                num = Random().nextInt(minValue-maxValue)
+            minValue = num
+            if (checkingLimits()){
+                try{
+                    num = Random().nextInt(minValue - maxValue) + minValue
+                    println(num)
+                }catch(e: Exception){
+                    num = Random().nextInt((minValue - maxValue)*-1) + minValue
+                }
                 guessing.setText(num.toString())
             }else{
-                guessing.setText("No puede ser, ganaste!")
+                guessing.setText("No puede ser, ganaste")
+                generate.visibility=View.VISIBLE
+
+                resetValues()
             }
         }
-
         down.setOnClickListener{
             maxValue=num
             if (checkingLimits()){
-                num = Random().nextInt(minValue-maxValue)
-                guessing.setText(num.toString())
+                try{
+                    num = Random().nextInt(minValue - maxValue) + minValue
+                    println(num)
+                }catch(e: Exception){
+                    num = Random().nextInt((minValue - maxValue)*-1) + minValue
+                }
+
+                if(num >=0 ){
+                    guessing.setText(num.toString())
+                }
             }else{
-                guessing.setText("No puede ser, Ganaste!")
+                guessing.setText("No puede ser, ganaste")
+                generate.visibility=View.VISIBLE
+
+                resetValues()
             }
         }
 
         guessed.setOnClickListener{
-            if(!won){
-                guessing.setText("Adiviné, tu número es el "+ num)
+            if (!won){
+                guessing.setText("Adiviné tu numero es el " + num)
                 guessed.setText("Volver a jugar")
-                won = true
+                won=true
             }else{
                 generate.visibility=View.VISIBLE
                 guessing.setText("Tap on generate to start")
@@ -63,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                 resetValues()
             }
         }
+
     }
 
     fun resetValues(){
@@ -70,7 +92,9 @@ class MainActivity : AppCompatActivity() {
         maxValue=100
         num=0
         won=false
+
     }
+
     fun checkingLimits(): Boolean{
         return minValue!=maxValue
     }
